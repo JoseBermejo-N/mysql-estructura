@@ -95,6 +95,7 @@ CREATE TABLE IF NOT EXISTS `pizzeria`.`pedidos` (
   `fecha_hora_pedido` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `tipo_entrega` ENUM('domicilio', 'recoger') NOT NULL,
   `precio` DECIMAL(8,2) NOT NULL,
+  `fecha_hora_entrega` DATETIME NOT NULL,
   `tienda_id` INT NOT NULL,
   `repartidor_empleado_id` INT NULL,
   `cliente_id` INT NOT NULL,
@@ -121,6 +122,30 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
+-- Table `pizzeria`.`tipos_de_productos`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `pizzeria`.`tipos_de_productos` ;
+
+CREATE TABLE IF NOT EXISTS `pizzeria`.`tipos_de_productos` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `nombre` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `pizzeria`.`categorias_pizzas`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `pizzeria`.`categorias_pizzas` ;
+
+CREATE TABLE IF NOT EXISTS `pizzeria`.`categorias_pizzas` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `nombre` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
 -- Table `pizzeria`.`productos`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `pizzeria`.`productos` ;
@@ -131,72 +156,19 @@ CREATE TABLE IF NOT EXISTS `pizzeria`.`productos` (
   `descripcion` VARCHAR(45) NULL,
   `imagen` VARCHAR(45) NULL,
   `precio` DECIMAL(6,2) NOT NULL,
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `pizzeria`.`categorias`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `pizzeria`.`categorias` ;
-
-CREATE TABLE IF NOT EXISTS `pizzeria`.`categorias` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `nombre` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `pizzeria`.`pizzas`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `pizzeria`.`pizzas` ;
-
-CREATE TABLE IF NOT EXISTS `pizzeria`.`pizzas` (
-  `producto_id` INT NOT NULL,
-  `categorias_id` INT NOT NULL,
-  PRIMARY KEY (`producto_id`),
-  INDEX `fk_pizzas_categorias1_idx` (`categorias_id` ASC) VISIBLE,
-  CONSTRAINT `fk_pizzas_productos1`
-    FOREIGN KEY (`producto_id`)
-    REFERENCES `pizzeria`.`productos` (`id`)
+  `tipos_de_productos_id` INT NOT NULL,
+  `categorias_pizzas_id` INT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_productos_tipos_de_productos1_idx` (`tipos_de_productos_id` ASC) VISIBLE,
+  INDEX `fk_productos_categorias_pizzas1_idx` (`categorias_pizzas_id` ASC) VISIBLE,
+  CONSTRAINT `fk_productos_tipos_de_productos1`
+    FOREIGN KEY (`tipos_de_productos_id`)
+    REFERENCES `pizzeria`.`tipos_de_productos` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
-  CONSTRAINT `fk_pizzas_categorias1`
-    FOREIGN KEY (`categorias_id`)
-    REFERENCES `pizzeria`.`categorias` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `pizzeria`.`hamburguesas`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `pizzeria`.`hamburguesas` ;
-
-CREATE TABLE IF NOT EXISTS `pizzeria`.`hamburguesas` (
-  `producto_id` INT NOT NULL,
-  PRIMARY KEY (`producto_id`),
-  CONSTRAINT `fk_hamburguesas_productos1`
-    FOREIGN KEY (`producto_id`)
-    REFERENCES `pizzeria`.`productos` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `pizzeria`.`bebidas`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `pizzeria`.`bebidas` ;
-
-CREATE TABLE IF NOT EXISTS `pizzeria`.`bebidas` (
-  `producto_id` INT NOT NULL,
-  PRIMARY KEY (`producto_id`),
-  CONSTRAINT `fk_bebidas_productos1`
-    FOREIGN KEY (`producto_id`)
-    REFERENCES `pizzeria`.`productos` (`id`)
+  CONSTRAINT `fk_productos_categorias_pizzas1`
+    FOREIGN KEY (`categorias_pizzas_id`)
+    REFERENCES `pizzeria`.`categorias_pizzas` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
